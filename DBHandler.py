@@ -53,7 +53,7 @@ class DatabaseManager:
             self.cursor.execute("BEGIN")
             
             self.cursor.executemany(f"INSERT INTO games ({DTO.Game.getProps()}) VALUES (?,?,?,?,?,?,?,?)", [game.getValues() for game in games])
-            self.cursor.executemany(f"INSERT INTO genres ({DTO.Genre.getProps()}) VALUES (?,?, ?)", [genre.getValues() for game in games for genre in game.genres])
+            self.cursor.executemany(f"INSERT INTO genres ({DTO.Genre.getProps()}) VALUES (?,?,LOWER(?))", [genre.getValues() for game in games for genre in game.genres])
             
             self.conn.commit()
         except Exception as e:
