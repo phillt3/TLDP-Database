@@ -26,7 +26,7 @@ def fetch_games(batch_size, transaction_num):
             response = requests.get(next_url, params) if x == 0 else requests.get(next_url)
             response.raise_for_status()  # Raise an HTTPError for bad responses
             data = response.json()
-            game_DTOs = [DTO.Game(game.get('id'), game.get('slug'), game.get('name'), game.get('metacritic'), game.get('released'), game.get('rating'), game.get('playtime'), game.get('background_image'), game.get('genres')) for game in data.get('results', [])]
+            game_DTOs = [DTO.Game(game.get('id'), game.get('slug'), game.get('name'), game.get('metacritic'), game.get('released'), game.get('rating'), game.get('playtime'), game.get('background_image'), game.get('genres'), game.get('platforms')) for game in data.get('results', [])]
             db_manager.perform_batch_transaction(game_DTOs)
             
             next_url = data.get("next")

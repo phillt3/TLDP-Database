@@ -22,13 +22,19 @@ class DatabaseManager:
         self.create_table(games_table_name, games_table_schema)
         
     def create_genres_table(self):
-        #The genres table consist of 3 columns (Id (game id), genre id, name of the genre)
+        #The genres table consists of 3 columns (Id (game id), genre id, name of the genre)
         genres_table_schema = "id INTEGER, genre_id INTEGER, name TEXT"
         genres_table_name = "genres"
         self.create_table(genres_table_name, genres_table_schema)
         
+    def create_platforms_table(self):
+        #The platform table consists of 3 columns (Id (game id), platform id, name of the platform)
+        platforms_table_schema = "id INTEGER, plat_id INTEGER, name TEXT"
+        platforms_table_name = "platforms"
+        self.create_table(platforms_table_name, platforms_table_schema)
+        
     def create_errors_table(self):
-        #Error table will hold any roolbacks info should they occur
+        #Error table will hold any roolback info should they occur
         errors_table_schema = "error TEXT"
         errors_table_name = "errors"
         self.create_table(errors_table_name, errors_table_schema)
@@ -36,6 +42,7 @@ class DatabaseManager:
     def create_GameFilter_tables(self):
         self.create_games_table()
         self.create_genres_table()
+        self.create_platforms_table()
         self.create_errors_table()
         
         
@@ -48,12 +55,13 @@ class DatabaseManager:
         self.conn.close()
         
     def perform_batch_transaction(self, games):
-        #this method is a contained operation to do a bulk insert of formatted game and genre records
+        #this method is a contained operation to do a bulk insert of formatted game, genre, and platform records
         try:
             self.cursor.execute("BEGIN")
             
             self.cursor.executemany(f"INSERT INTO games ({DTO.Game.getProps()}) VALUES (?,?,?,?,?,?,?,?)", [game.getValues() for game in games])
             self.cursor.executemany(f"INSERT INTO genres ({DTO.Genre.getProps()}) VALUES (?,?,LOWER(?))", [genre.getValues() for game in games for genre in game.genres])
+            self.cursor.executemany(f"INSERT INTO platforms ({DTO.Platform.getProps()}) VALUES (?,?,LOWER(?))", [platform.getValues() for game in games for platform in game.platforms])
             
             self.conn.commit()
         except Exception as e:
