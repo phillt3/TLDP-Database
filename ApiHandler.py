@@ -26,7 +26,7 @@ def fetch_games(batch_size, transaction_num):
             response = requests.get(next_url, params) if x == 0 else requests.get(next_url)
             response.raise_for_status()  # Raise an HTTPError for bad responses
             data = response.json()
-            game_DTOs = [DTO.Game(game.get('id'), game.get('slug'), game.get('name'), game.get('metacritic'), game.get('released'), game.get('rating'), game.get('playtime'), game.get('background_image'), game.get('genres'), game.get('platforms')) for game in data.get('results', [])]
+            game_DTOs = [DTO.Game(game.get('id'), game.get('slug'), game.get('name'), game.get('metacritic'), game.get('released'), game.get('rating'), game.get('playtime'), fetch_game_description(game.get('id')), game.get('background_image'), game.get('genres'), game.get('platforms')) for game in data.get('results', [])]
             db_manager.perform_batch_transaction(game_DTOs)
             
             next_url = data.get("next")
@@ -38,4 +38,21 @@ def fetch_games(batch_size, transaction_num):
         print(f"Error: {e}")
     
     db_manager.close_connection()
+
+#The application was missing more depth and information for each game, but the description is not included in the data retrieved from the api call in fetch_games
+#Therefore this additional method was needed to make the game specific information api call for each game retrieved.
+def fetch_game_description(game_id):
+    params = {
+        'key': config.RAWG_API_KEY,
+    }
+    
+    response = requests.get(config.RAWG_API_BASE_URL + "/" + str(game_id), params)
+    try:
+        data = response.json()
+        return data.get('description', "")
+    except requests.exceptions.RequestException as e:
+        #Log error that occurs while handling API request for description
+        print(f"Error: {e}")
+        return ""
+    
         

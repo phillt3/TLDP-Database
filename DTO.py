@@ -57,15 +57,15 @@ class Game:
     
     @staticmethod
     def getProps():
-        return "id, slug, name, metacritic, released, rating, playtime, background_image"
+        return "id, slug, name, metacritic, released, rating, playtime, description, background_image"
         
     def getValues(self):
-        return (self.id, self.slug, self.name, self.metacritic, self.released, self.rating, self.playtime, self.background_image)
+        return (self.id, self.slug, self.name, self.metacritic, self.released, self.rating, self.playtime, self.description, self.background_image)
         
     def __repr__(self):
-        return f"(id: {self.id}, slug: {self.slug}, name: {self.name}, metacritic: {self.metacritic}, released: {self.released}, rating: {self.rating}, playtime: {self.playtime}, background_image: {self.background_image}, genres: {self.genres}, platforms: {self.platforms})"
+        return f"(id: {self.id}, slug: {self.slug}, name: {self.name}, metacritic: {self.metacritic}, released: {self.released}, rating: {self.rating}, playtime: {self.playtime}, description: {self.description}, background_image: {self.background_image}, genres: {self.genres}, platforms: {self.platforms})"
     
-    def __init__(self,id, slug, name, metacritic, released, rating, playtime, background_image, genres, platforms):
+    def __init__(self,id, slug, name, metacritic, released, rating, playtime, description, background_image, genres, platforms):
         self.id = id #int UUID for game
         self.slug = slug #string formatted title of game to be all lowercase and have -'s
         self.name = name #string title of game
@@ -73,6 +73,7 @@ class Game:
         self.released = released #string date of release
         self.rating = rating #double rating out of 5
         self.playtime = playtime #int average steam playtime hours
+        self.description = description #description of game
         self.background_image = background_image #string url to image
         self.genres = Game.getGenreList(genres, id) #an array of genre objects
         self.platforms = Game.getPlatformList(platforms, id) #an array of platform objects

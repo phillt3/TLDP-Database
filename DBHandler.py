@@ -16,8 +16,8 @@ class DatabaseManager:
         self.conn.commit()
         
     def create_games_table(self):
-        #The games table will consist of 8 columns with the game ID being the primary key (id, slug, game name, metacritic score, date released, rating on 1-5 scale, avg playtime, background_image url)
-        games_table_schema = "id INTEGER PRIMARY KEY UNIQUE, slug TEXT NOT NULL, name TEXT NOT NULL, metacritic INTEGER, released TEXT, rating NUMERIC, playtime INTEGER, background_image TEXT"
+        #The games table will consist of 9 columns with the game ID being the primary key (id, slug, game name, metacritic score, date released, rating on 1-5 scale, avg playtime, description, background_image url)
+        games_table_schema = "id INTEGER PRIMARY KEY UNIQUE, slug TEXT NOT NULL, name TEXT NOT NULL, metacritic INTEGER, released TEXT, rating NUMERIC, playtime INTEGER, description TEXT, background_image TEXT"
         games_table_name = "games"
         self.create_table(games_table_name, games_table_schema)
         
@@ -59,7 +59,7 @@ class DatabaseManager:
         try:
             self.cursor.execute("BEGIN")
             
-            self.cursor.executemany(f"INSERT INTO games ({DTO.Game.getProps()}) VALUES (?,?,?,?,?,?,?,?)", [game.getValues() for game in games])
+            self.cursor.executemany(f"INSERT INTO games ({DTO.Game.getProps()}) VALUES (?,?,?,?,?,?,?,?,?)", [game.getValues() for game in games])
             self.cursor.executemany(f"INSERT INTO genres ({DTO.Genre.getProps()}) VALUES (?,?,LOWER(?))", [genre.getValues() for game in games for genre in game.genres])
             self.cursor.executemany(f"INSERT INTO platforms ({DTO.Platform.getProps()}) VALUES (?,?,LOWER(?))", [platform.getValues() for game in games for platform in game.platforms])
             
